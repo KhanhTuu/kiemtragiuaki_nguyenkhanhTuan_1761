@@ -19,12 +19,29 @@ $sql = "SELECT HocPhan.MaHP, HocPhan.TenHP, HocPhan.SoTinChi, DangKy.NgayDK
         WHERE DangKy.MaSV = '$MaSV'";
 
 $result = $conn->query($sql);
+
+// Tính tổng số tín chỉ đã đăng ký
+$total_credits = 0;
+$hocphans = [];
+while ($row = $result->fetch_assoc()) {
+    $hocphans[] = $row;
+    $total_credits += $row['SoTinChi'];
+}
+
+// Xác nhận đăng ký
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm'])) {
+    if (!empty($hocphans)) {
+        $_SESSION['message'] = "✅ Bạn đã đăng ký học phần thành công!";
+        header("Location: success.php");
+        exit();
+    }
+}
 ?>
 
 <div class="container mt-5">
     <h2 class="text-center text-primary">📌 Học Phần Đã Đăng Ký</h2>
 
-    <?php if ($result->num_rows > 0) { ?>
+    <?php if (!empty($hocphans)) { ?>
         <table class="table table-bordered text-center">
             <thead class="table-dark">
                 <tr>
@@ -36,7 +53,7 @@ $result = $conn->query($sql);
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()) { ?>
+                <?php foreach ($hocphans as $row) { ?>
                 <tr>
                     <td><?= $row['MaHP'] ?></td>
                     <td><?= $row['TenHP'] ?></td>
@@ -52,12 +69,22 @@ $result = $conn->query($sql);
             </tbody>
         </table>
 
+        <!-- Hiển thị Tổng Số Tín Chỉ -->
+        <div class="text-center mt-3">
+            <h5 class="fw-bold text-danger">📌 Tổng Số Tín Chỉ: <?= $total_credits ?> tín chỉ</h5>
+        </div>
+
+        <!-- Form Xác Nhận Đăng Ký -->
+        <form method="post" class="text-center mt-3">
+            <button type="submit" name="confirm" class="btn btn-success w-50">✅ Xác Nhận Đăng Ký</button>
+        </form>
+
         <!-- Nút Xóa Tất Cả -->
         <div class="text-center mt-3">
-    <a href="unregister_all.php" class="btn btn-warning btn-lg" onclick="return confirm('Bạn có chắc muốn hủy TẤT CẢ học phần đã đăng ký?')">
-        🗑️ Xóa Tất Cả
-    </a>
-</div>
+            <a href="unregister_all.php" class="btn btn-warning btn-lg" onclick="return confirm('Bạn có chắc muốn hủy TẤT CẢ học phần đã đăng ký?')">
+                🗑️ Xóa Tất Cả
+            </a>
+        </div>
 
     <?php } else { ?>
         <div class="alert alert-warning text-center">Bạn chưa đăng ký học phần nào!</div>

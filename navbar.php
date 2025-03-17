@@ -35,7 +35,6 @@ if (session_status() == PHP_SESSION_NONE) {
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="index.php"><i class="fas fa-users"></i> Sinh Viên</a></li>
                 <li class="nav-item"><a class="nav-link" href="register.php"><i class="fas fa-edit"></i> Đăng Ký</a></li>
-                <li class="nav-item"><a class="nav-link" href="registered.php"><i class="fas fa-check-square"></i> Học phần đã đăng ký</a></li>
                 <li class="nav-item"><a class="nav-link" href="my_courses.php"><i class="fas fa-book"></i> Học Phần Của Tôi</a></li>
             </ul>
             <ul class="navbar-nav">
