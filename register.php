@@ -12,7 +12,7 @@ if (!isset($_SESSION["MaSV"])) {
 $MaSV = $_SESSION["MaSV"];
 
 // Nếu sinh viên chọn đăng ký học phần
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["MaHP"])) {
     $MaHP = $_POST["MaHP"];
 
     // Kiểm tra số lượng học phần còn chỗ không
@@ -46,23 +46,47 @@ $hocphans = $conn->query($sql_hp);
 ?>
 
 <div class="container mt-5">
-    <h2 class="text-center text-primary">Đăng Ký Học Phần</h2>
-    
-    <form method="post" class="p-4 bg-light shadow rounded">
-        <label class="form-label">Chọn học phần:</label>
-        <select class="form-select" name="MaHP" required>
-            <option value="">-- Chọn học phần --</option>
-            <?php while ($row = $hocphans->fetch_assoc()) { ?>
-                <option value="<?= $row['MaHP'] ?>" <?= ($row['SoLuong'] <= 0) ? 'disabled' : '' ?>>
-                    <?= $row['TenHP'] ?> (<?= $row['SoTinChi'] ?> tín chỉ) - 
-                    <?= ($row['SoLuong'] > 0) ? "Còn {$row['SoLuong']} chỗ" : "Hết chỗ" ?>
-                </option>
-            <?php } ?>
-        </select>
-        <button type="submit" class="btn btn-primary mt-3 w-100">Thêm học phần</button>
-    </form>
+    <h2 class="text-center text-primary">📌 Danh Sách Học Phần</h2>
 
-    <div class="mt-4">
-        <a href="registered.php" class="btn btn-success w-100">Xem học phần đã đăng ký</a>
+    <?php if (isset($_SESSION['message'])) { ?>
+        <div class="alert alert-info text-center"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
+    <?php } ?>
+
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Mã HP</th>
+                <th>Tên Học Phần</th>
+                <th>Số Tín Chỉ</th>
+                <th>Số Lượng Còn</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = $hocphans->fetch_assoc()) { ?>
+            <tr>
+                <td><?= $row['MaHP'] ?></td>
+                <td><?= $row['TenHP'] ?></td>
+                <td><?= $row['SoTinChi'] ?></td>
+                <td>
+                    <span class="badge <?= ($row['SoLuong'] > 0) ? 'bg-success' : 'bg-danger' ?>">
+                        <?= ($row['SoLuong'] > 0) ? $row['SoLuong'] : 'Hết chỗ' ?>
+                    </span>
+                </td>
+                <td>
+                    <form method="post">
+                        <input type="hidden" name="MaHP" value="<?= $row['MaHP'] ?>">
+                        <button type="submit" class="btn btn-primary btn-sm" <?= ($row['SoLuong'] <= 0) ? 'disabled' : '' ?>>
+                            📝 Đăng Ký
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <?php } ?>
+        </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+        <a href="registered.php" class="btn btn-success">✅ Xem Học Phần Đã Đăng Ký</a>
     </div>
 </div>
