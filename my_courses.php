@@ -51,6 +51,14 @@ $result = $conn->query($sql);
                 <?php } ?>
             </tbody>
         </table>
+
+        <!-- Nút Xóa Tất Cả -->
+        <div class="text-center mt-3">
+    <a href="unregister_all.php" class="btn btn-warning btn-lg" onclick="return confirm('Bạn có chắc muốn hủy TẤT CẢ học phần đã đăng ký?')">
+        🗑️ Xóa Tất Cả
+    </a>
+</div>
+
     <?php } else { ?>
         <div class="alert alert-warning text-center">Bạn chưa đăng ký học phần nào!</div>
     <?php } ?>
